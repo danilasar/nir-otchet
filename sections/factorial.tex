@@ -20,12 +20,14 @@
 \end{equation}
 
 \subsection{Нахождение факториала рекурсивным способом}
-Пусть на вход подано число $n\in\mathbb{N}$. Тогда алгоритм \cite{factorial-calculation} будет выглядеть таким образом:
+В соответствии с алгоритмом вычисления факториала \cite{factorial-calculation},
+
+$\forall n \in \mathbb{N} \text{ выполняется}$
 \begin{itemize}
-  \item Если $0 \leqslant n \leqslant 1$, то возвращаем $0! = 1! = 1$;
-  \item Если $n > 1$, то возвращаем $n! = (n-1)!\times n$.
+  \item $0 \leqslant n \leqslant 1 \Rightarrow n! = 1$;
+  \item $n > 1 \Rightarrow n! = (n-1)!\times n$.
 \end{itemize}
-Таким образом, мы можем рекурсивно вычислить факториал любого достаточно малого числа $n$. Для больших чисел алгоритм будет медленным в силу экстремально быстрого роста функции факториала.
+В силу ограниченного размера регистров процессора на $n$ накладывается ограничение $n \leq 22$.
 
 \subsection{Вид формы в конструкторе}
 Форма имеет вид:
@@ -37,9 +39,9 @@
 \end{figure}
 
 \subsection{Таблица с описанием элементов формы}
-Все элементы формы были переименованы для большей читаемости. В таблице \ref{tab:factorial-form} представлены все изменения.
+Все элементы формы были переименованы. В таблице \ref{tab:factorial-form} представлены все изменения.
 
-\begin{table}
+\begin{table}[H]
   \centering
   \begin{tabular}{|m{0.3\textwidth}|m{0.3\textwidth}|m{0.3\textwidth}|}
     \hline
@@ -94,33 +96,33 @@
 
 \subsection{Примеры исходного кода}
 \begin{minted}{cpp}
-/* Процедура для очистки экрана */
-private: void ClearAll() {
-  this->textOutput->Text = "";
-  errorProvider->SetError(textInput, String::Empty);
+/// Функция вычисления факториала, принимает n в [0,FACTORIALIZER_MAX_N)
+long long Factorializer::factorial(long long n) {
+	if (n > FACTORIALIZER_MAX_N) {
+		throw gcnew System::ArgumentOutOfRangeException("результат превысит 64 бит, операция не позволена");
+	} else if (n < 0) {
+		throw gcnew System::ArgumentOutOfRangeException("факториал отрицательного числа не определён");
+	} else if (n == 0) {
+		return 1;
+	}
+	if (!(*used)[n - 1]) {
+		dp[n - 1] = n * factorial(n - 1);
+		(*used)[n - 1] = true;
+	}
+	return dp[n - 1];
 }
 
-/* Обработчик события изменения текстового поля */
-private: System::Void textInput_onChange(System::Object^ sender, System::EventArgs^ e) {
-  ClearAll();
-  long long InputNumber;
-  bool result = Int64::TryParse(this->textInput->Text, InputNumber);
+/// Конструктор вычислителя факториала
+Factorializer::Factorializer() {
+	dp = (long long*)calloc(FACTORIALIZER_MAX_N, sizeof(long long));
+	used = new std::bitset<FACTORIALIZER_MAX_N>(0);
+}
 
-  // в result записали булеву переменную, отвечающую за корректный ввод
-  if (!result)
-    errorProvider->SetError(textInput, "Введено не целое число");
-  else {
-    // по условию задачи число не должно быть больше 20
-    if (InputNumber > 20)
-      this->textOutput->Text = "Слишком большое число";
-    else {
-      // внешняя рекурсивная функция факториала вернёт -1 только в одном случае -- если исходное число отрицательное
-      long long OutputNumber = factorial(InputNumber);
-      if (OutputNumber == -1)
-        errorProvider->SetError(textInput, "Введено отрицательное число");
-      else this->textOutput->Text = System::Convert::ToString(OutputNumber);
-    }
-  }
+/// Конструктор копирования факториала
+Factorializer::Factorializer(const Factorializer %) {
+	dp = nullptr;
+	used = new std::bitset<FACTORIALIZER_MAX_N>();
+	throw gcnew System::InvalidOperationException("не надо пытаться копировать единое состояние, пожалуйста");
 }
 \end{minted}
 
