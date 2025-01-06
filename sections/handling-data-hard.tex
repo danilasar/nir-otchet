@@ -92,41 +92,52 @@
 
 \subsection{Примеры исходного кода}
 \begin{minted}{cpp}
-/* функция для обсчёта массива данных */
-private: System::Void executeButton_Click(System::Object^ sender, System::EventArgs^ e) {
-    int evenColumns = 0;
-    try {
-        for (int j = 0; j < this->tableGrid->Columns->Count; ++j) {
-            bool flag = true;
-            for (int i = 0; i < this->tableGrid->Rows->Count; ++i) {
-                int value;
-                Int32::TryParse(System::Convert::ToString(this->tableGrid->Rows[tableGrid->RowCount - i - 1]->Cells[j]->Value), value);
-                if (value % 2 != 0) {
-                    flag = false;
-                    break;
-                }
-            }
-    
-            evenColumns++;
-            for (int i = 0; i < this->tableGrid->Rows->Count; ++i) {
-                if (flag) {
-                    this->outputGridView->Rows[tableGrid->RowCount - i - 1]->Cells[j]->Value = this->xGrid->Rows[tableGrid->RowCount - i - 1]->Cells[0]->Value;
-                }
-                else {
-                    this->outputGridView->Rows[tableGrid->RowCount - i - 1]->Cells[j]->Value = this->tableGrid->Rows[tableGrid->RowCount - i - 1]->Cells[j]->Value;
-                }
-    
-            }
-        }
-    
-        if (!evenColumns) {
-            this->errorProvider->Text = "Нет чётных столбцов";
-        }
-    }
-    catch (...) {
-        this->errorProvider->Text = "Не удалось заменить столбцы";
-    }
-}
+	/* функция обновления вывода */
+	private: System::Void OnExecuteButton(System::Object^ sender, System::EventArgs^ e) {
+		int evenColumns = 0;
+		try {
+			for (int j = 0; j < this->inputTable->Columns->Count; ++j) {
+				bool flag = true;
+				for (int i = 0; i < this->inputTable->Rows->Count; ++i) {
+					int value;
+					bool blyat = Int32::TryParse(System::Convert::ToString(this->inputTable->Rows[inputTable->RowCount - i - 1]->Cells[j]->Value), value);
+					if (!blyat) {
+						this->output->Text = "Ай-ай-ай -_-";
+						return;
+					}
+					if (value % 2 != 0) {
+						flag = false;
+						break;
+					}
+				}
+				if (flag) {
+					evenColumns++;
+				}
+				this->output->Text = "";
+				for (int i = 0; i < this->inputTable->Rows->Count; ++i) {
+					if (flag) {
+						int x;
+						bool check = Int32::TryParse(System::Convert::ToString(this->xTable->Rows[inputTable->RowCount - i - 1]->Cells[0]->Value), x);
+						if (!check) {
+							this->output->Text = "Ты абоба -_-";
+							return;
+						}
+						this->outputTable->Rows[inputTable->RowCount - i - 1]->Cells[j]->Value = x;
+					} else {
+						this->outputTable->Rows[inputTable->RowCount - i - 1]->Cells[j]->Value = this->inputTable->Rows[inputTable->RowCount - i - 1]->Cells[j]->Value;
+					}
+	
+				}
+			}
+
+			if (!evenColumns) {
+				this->output->Text = "Нет чётных столбцов";
+			}
+		}
+		catch (...) {
+			this->output->Text = "Не удалось заменить столбцы";
+		}
+	}
 \end{minted}
 
 Больше кода проекта доступно в приложении \ref{application-A}. Также в приложенном архиве можно найти полный код проекта.

@@ -97,63 +97,63 @@
 
 \subsection{Примеры исходного кода}
 \begin{minted}{cpp}
-/* функция для обсчёта массива данных */
-private: System::Void countArray(System::Object^ sender, System::EventArgs^ e) {
-    long long sum = 0;
-    long long minEl = LLONG_MAX;
-    
-    String^ columnName = "Массив";
-    String^ resultSum;
-    String^ resultIdx;
+	/* функция для обновления вывода */
+	private: OutputState^ GetOutput() {
+		long long sum = 0;
+		long long minEl = LLONG_MAX;
 
-    // флаги для ошибок
-    bool error = false;
-    bool ifOdds = false;
-    bool ifOddsOnEvenIdx = false;
-    bool ifEvens = false;
-    
-    for (int i = 0; i < this->arrayGridView->RowCount; ++i) {
-        long long val;
-        Object^ cellValue = this->arrayGridView->Rows[i]->Cells[columnName]->Value;
-    
-        if (cellValue != nullptr) {
-            try {
-                val = Convert::ToInt64(cellValue);
-                if (val % 2 != 0 && i % 2 == 0) {
-                    sum += Convert::ToInt64(cellValue);
-                    ifOddsOnEvenIdx = true;
-                    ifOdds = true;
-                }
-                else if (val % 2 != 0) ifOdds = true;
-                else {
-                    ifEvens = true;
-                    if (val < minEl) {
-                        minEl = val;
-                        resultIdx = Convert::ToString(i);
-                    }
-                    else if (val == minEl) {
-                        resultIdx += ", " + Convert::ToString(i);
-                    }
-                }
-            }
-            catch (FormatException ^ e) {
-                resultSum = "В таблице есть не числа";
-                resultIdx = resultSum;
-                error = true;
-                break;
-            }
-        }
-    }
-    
-    if (!error) resultSum = Convert::ToString(sum);
-    if (!error && !ifOddsOnEvenIdx) resultSum = "Таких элементов нет";
-    if (!error && !ifOdds) resultSum = "Нечётных элементов нет";
-    
-    if (!error && !ifEvens) resultIdx = "Чётных элементов нет";
-    
-    this->outputOddSumTextBox->Text = resultSum;
-    this->outputMinsTextBox->Text = resultIdx;
-}
+		String^ columnName = "Массив";
+		OutputState^ state = gcnew OutputState();
+
+		bool oddsFound = false;
+		bool ifSummable = false;
+		bool evensFound = false;
+
+		for (int i = 0; i < this->arrayGridView->RowCount; ++i) {
+			long long val;
+			Object^ cellValue = this->arrayGridView->Rows[i]->Cells[columnName]->Value;
+
+			if (cellValue == nullptr) {
+				continue;
+			}
+			try {
+				val = Convert::ToInt64(cellValue);
+				if (val % 2 != 0 && i % 2 == 0) {
+					sum += Convert::ToInt64(cellValue);
+					ifSummable = true;
+					oddsFound = true;
+				}
+				else if (val % 2 != 0) oddsFound = true;
+				else {
+					evensFound = true;
+					if (val < minEl) {
+						minEl = val;
+						state->resultIdx = Convert::ToString(i);
+					}
+					else if (val == minEl) {
+						state->resultIdx += ", " + Convert::ToString(i);
+					}
+				}
+			}
+			catch (FormatException^ e) {
+				state->resultSum = "Разрешены только целые числа";
+				state->resultIdx = state->resultSum;
+				return state;
+			}
+		}
+
+		state->resultSum = Convert::ToString(sum);
+		if (!oddsFound) {
+			state->resultSum = "Нечётных элементов нет";
+		}
+		else if (!ifSummable) {
+			state->resultSum = "На чётных индексах нет нечётных";
+		}
+		if (!evensFound) {
+			state->resultIdx = "Чётных элементов нет";
+		}
+		return state;
+	}
 \end{minted}
 
 Больше кода проекта доступно в приложении \ref{application-A}. Также в приложенном архиве можно найти полный код проекта.

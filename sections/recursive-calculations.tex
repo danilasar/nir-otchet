@@ -93,36 +93,28 @@
 
 \subsection{Примеры исходного кода}
 \begin{minted}{cpp}
-/* бизнес-логика для вычисления многочлена */
-double H(long long n, double x) {
-    if (n == 0) return 1.0;
-    if (n == 1) return 2 * x;
-    return (2 * x * H(n - 1, x) - 2 * n * H(n - 2, x));
-}
-
 /* обработка события изменения полей */
-private: System::Void updateResult_TextBox(System::Object^ sender, System::EventArgs^ e) {
-    double xInput = 0;
-    bool resultX = Double::TryParse(this->xTextBox->Text, xInput);
-    
-    long long nInput = 0;
-    bool resultN = Int64::TryParse(this->nTextBox->Text, nInput);
-    
-    if (!resultX && !resultN) {
-        this->outputTextBox->Text = "x - не число, n - не целое число";
-    }
-    else if (!resultX) {
-        this->outputTextBox->Text = "x - не число";
-    }
-    else if (!resultN) {
-        this->outputTextBox->Text = "n - не целое число";
-    }
-    else if (nInput < 0) {
-        this->outputTextBox->Text = "Отрицательное число";
-    }
-    else {
-        this->outputTextBox->Text = System::Convert::ToString(H(nInput, xInput));
-    }
+private: System::Void recalculate(System::Object^ sender, System::EventArgs^ e) {
+	double xInput = 0;
+	bool resultX = Double::TryParse(this->xTextBox->Text, xInput);
+
+	long long nInput = 0;
+	bool resultN = Int64::TryParse(this->nTextBox->Text, nInput);
+
+	if (!(resultX && resultN)) {
+		if (resultN) {
+			this->outputTextBox->Text = "x - не число";
+		} else if (resultX) {
+			this->outputTextBox->Text = "n - не целое число";
+		} else {
+			this->outputTextBox->Text = "x - не число, n - не целое число";
+		}
+	} else if (nInput < 0) {
+		this->outputTextBox->Text = "Отрицательное число";
+	}
+	else {
+		this->outputTextBox->Text = System::Convert::ToString(H(nInput, xInput));
+	}
 }
 \end{minted}
 

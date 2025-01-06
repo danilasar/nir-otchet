@@ -41,7 +41,7 @@
 % \studenttitle{студентки}
 
 % Фамилия, имя, отчество в родительном падеже
-\author{Толстова Роберта Сергеевича}
+\author{Григорьева Данилы Евгеньевича}
 
 
 % Кафедра (в родительном падеже)
@@ -141,14 +141,26 @@
     \item документирование разработанного кода.
 \end{itemize}
 
-%\include{sections/factorial}
-%\include{sections/simple-calculations}
-%\include{sections/recursive-calculations}
-%\include{sections/handling-data-easy}
-%\include{sections/handling-data-hard}
+\include{sections/factorial}
+\include{sections/simple-calculations}
+\include{sections/recursive-calculations}
+\include{sections/handling-data-easy}
+\include{sections/handling-data-hard}
 \include{sections/matrix-calculator}
+\include{sections/collections}
+\include{sections/file-dialogs}
+\include{sections/test}
 
 \conclusion
+В ходе практики было реализовано несколько приложений в среде MS
+Visual Studio с целью закрепления навыков построения устаревшего оконного интерфейса и программирования с использованием технологий Windows Forms и .NET
+Framework на языках C++/CLI.
+На практике разработаны приложения, содержащие такие элементы управления как TextBox, Label, Button, DataGridView, OpenFileDialog, SaveFileDialog,
+Panel, RadioButton, CheckBox, Group, PictureBox, ErrorProvider.
+Было освоено динамическое создание элементов формы в процессе вы-
+полнения программы, изучены виды панелей и способы размещения элементов
+в них. Не маловажно и то, что были применены навыки программирования на
+основе обратных вызовов при обработке событий формы.
 
 % Отобразить все источники. Даже те, на которые нет ссылок.
 \nocite{*}
@@ -159,5 +171,14 @@
 % Окончание основного документа и начало приложений Каждая последующая секция
 % документа будет являться приложением
 \appendix
+\section{Архив с отчётом о выполненной работе}
+\label{application-A}
+В приложенном архиве можно ознакомиться со следующими файлами:
+
+\texttt{otchet.zip} --- исходные коды отчёта в \LaTeX;
+
+\texttt{labs.zip} --- исходный коды проектов;
+
+\texttt{otchet.pdf} --- этот отчёт о практике
 
 \end{document}

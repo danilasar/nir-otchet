@@ -98,62 +98,37 @@
 
 \subsection{Примеры исходного кода}
 \begin{minted}{cpp}
-/* процедура для очистки всех полей ввода и ошибок */
-private: System::Void ClearAll() {
-    this->outputTextbox->Text = "";
-    this->errorProvider->Clear();
-}
-
-/* бизнес-логика: вычисление выражения */
-private: double CalculateExpression(int x, int y) {
-if (x + y == 0) {
-    throw gcnew DivideByZeroException();
-    return 0;
-}
-
-    return((cos(2 * x * x) + pow(sin(y), 2)) / (x + y)) + (y * x);
-}
-
-/* обработка события нажатия на кнопку <<Вычислить>> */
-private: System::Void calculateButton_Click(System::Object^ sender, System::EventArgs^ e) {
-    ClearAll();
-    
-    String^ rawX = gcnew String(this->xTextbox->Text);
-    String^ rawY = gcnew String(this->yTextbox->Text);
-    String^ error = "";
-    
-    int x, y;
-    
-    if (!Int32::TryParse(rawX, x)) {
-        error += "x - не целое число";
-        this->errorProvider->SetError(this->xTextbox, "x - не целое число");
-    }
-
-    if (!Int32::TryParse(rawY, y)) {
-        if (error->Length != 0) {
-            // если сообщений об ошибках несколько, то разделим их символом \n
-            error += Environment::NewLine;
-        }
-        error += "y - не целое число";
-        this->errorProvider->SetError(this->yTextbox, "y - не целое число");
-    }
-
-    if (error->Length != 0) {
-      this->outputTextbox->Text = error;
-      return; // нет смысла обрабатывать некорректные данные
-    }
-
-    double result;
-    try {
-      result = CalculateExpression(x, y);
-    }
-    catch (DivideByZeroException^ e) {
-      this->outputTextbox->Text = "Деление на ноль";
-      return;
-    }
-
-    this->outputTextbox->Text = Convert::ToString(result);
-}
+	/* обработка события нажатия на кнопку вычисления */
+	private: System::Void btnCalculate_Click(System::Object^ sender, System::EventArgs^ e) {
+		ClearAll();
+		long long InputX;
+		long long InputY;
+		// переводим сторку из TextBox в число
+		bool parseX = Int64::TryParse(this->inputX->Text, InputX);
+		bool parseY = Int64::TryParse(this->inputY->Text, InputY);
+		// ввели не число
+		if (!parseX) {
+			errorProviderX->SetError(inputX, "Введено не целое число");
+			if (!parseY) {
+				errorProviderY->SetError(inputY, "Введено не целое число");
+			}
+		}
+		else if (!parseY) {
+			errorProviderY->SetError(inputY, "Введено не целое число");
+		}
+		// проверка на деление на ноль
+		else {
+			if ((InputX == 0 && InputY == 0) || 
+				(InputX == -4 && abs(InputY) == 2)) {
+				errorProviderX->SetError(inputX, "Деление на ноль");
+				errorProviderY->SetError(inputY, "Деление на ноль");
+			}
+			else{
+				double resOutput = solve(InputX, InputY);
+				this->output->Text = System::Convert::ToString(resOutput);
+			}
+		}
+	}
 \end{minted}
 
 Больше кода проекта доступно в приложении \ref{application-A}. Также в приложенном архиве можно найти полный код проекта.
